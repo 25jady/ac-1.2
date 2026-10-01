@@ -1,0 +1,687 @@
+<title>Canton English</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a trade-fair visitor badge on top (level, countdown, XP), then four tabs.
+   Lessons run full screen as a focused overlay. Jade is the only accent; marigold marks XP. */
+:root {
+  --bg: #eaf0ee;
+  --surface: #ffffff;
+  --surface-2: #f3f7f5;
+  --ink: #12201c;
+  --muted: #566862;
+  --line: #d2dcd8;
+  --accent: #0a7a5b;
+  --accent-ink: #ffffff;
+  --xp: #e0a21a;
+  --good: #167a43;
+  --bad: #c2362d;
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1614; --surface: #15211e; --surface-2: #1b2a26; --ink: #e7f1ee; --muted: #93a9a2;
+    --line: #283a35; --accent: #3fcf9c; --accent-ink: #06231a; --xp: #f1b84a; --good: #4cd68a; --bad: #ff7b6e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1614; --surface: #15211e; --surface-2: #1b2a26; --ink: #e7f1ee; --muted: #93a9a2;
+  --line: #283a35; --accent: #3fcf9c; --accent-ink: #06231a; --xp: #f1b84a; --good: #4cd68a; --bad: #ff7b6e;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--font-body); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3, p { margin: 0; }
+.mono { font-family: var(--font-mono); letter-spacing: .04em; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 16px 16px 112px; display: flex; flex-direction: column; gap: 20px; }
+
+/* Badge */
+.badge { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 26px 18px 16px; position: relative; display: flex; flex-direction: column; gap: 14px; }
+.badge::before { content: ""; position: absolute; top: 9px; left: 50%; width: 54px; height: 9px; margin-left: -27px; border-radius: 6px; background: var(--bg); border: 1px solid var(--line); }
+.b-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.wordmark { font-family: var(--font-display); font-variation-settings: "wdth" 120; font-weight: 800; font-size: 1.05rem; letter-spacing: .01em; }
+.pass { font-size: .72rem; color: var(--muted); }
+.b-main { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.rank { font-size: .72rem; color: var(--muted); text-transform: uppercase; }
+.badge h1 { font-family: var(--font-display); font-variation-settings: "wdth" 115; font-weight: 800; font-size: clamp(1.7rem, 7vw, 2.3rem); line-height: 1.05; text-wrap: balance; }
+.count { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+.count b { font-family: var(--font-display); font-variation-settings: "wdth" 100; font-size: 2.3rem; line-height: 1; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+.count span { font-size: .8rem; color: var(--muted); }
+.xpbar, .bar { height: 10px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.xpbar i, .bar i { display: block; height: 100%; background: var(--xp); border-radius: 6px; transition: width .4s; }
+.bar i { background: var(--accent); }
+.xpl { font-size: .74rem; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+
+/* Generic */
+.sec-title { font-family: var(--font-display); font-variation-settings: "wdth" 110; font-weight: 800; font-size: 1.25rem; text-wrap: balance; }
+.sub { color: var(--muted); font-size: .95rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.btn { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 12px; padding: 12px 18px; font-weight: 700; min-height: 48px; }
+.btn.alt { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
+.btn.wide { width: 100%; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.link { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; font-weight: 600; text-align: left; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Goal */
+.goal { flex-direction: row; align-items: center; gap: 14px; }
+.goal .bar { flex: 1; }
+.goal strong { font-variant-numeric: tabular-nums; }
+
+/* Units */
+.unit-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.unit-head h3 { font-family: var(--font-display); font-variation-settings: "wdth" 108; font-weight: 800; font-size: 1.15rem; }
+.unit-n { font-size: .74rem; color: var(--muted); }
+.chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface-2); border-radius: 10px; padding: 10px 4px; font-weight: 600; font-size: .88rem; min-height: 44px; }
+.chip.done { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.chip.next { border: 2px solid var(--accent); }
+.tag { font-size: .72rem; padding: 2px 8px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); font-family: var(--font-mono); white-space: nowrap; }
+
+/* Media */
+.item { display: flex; flex-direction: column; gap: 6px; padding-block: 12px; border-top: 1px solid var(--line); }
+.item:first-of-type { border-top: 0; padding-top: 0; }
+.item-h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.item-h h3 { font-size: 1.02rem; font-weight: 700; }
+.check { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; }
+.check input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+.check label { flex: 1; min-width: 0; }
+ol.steps { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 6px; }
+
+/* Glossary */
+.search { width: 100%; border: 2px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 12px; padding: 12px 14px; font: inherit; min-height: 48px; }
+.phrase { display: flex; gap: 12px; align-items: center; padding-block: 10px; border-top: 1px solid var(--line); }
+.phrase:first-child { border-top: 0; }
+.phrase > div { flex: 1; min-width: 0; }
+.phrase .en { font-weight: 600; }
+.phrase .pt { color: var(--muted); font-size: .92rem; }
+.phrase .u { font-size: .7rem; color: var(--muted); }
+
+/* Speaker */
+.spk { width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--accent); background: var(--surface); color: var(--accent); display: grid; place-items: center; flex: none; }
+.spk.big { width: 84px; height: 84px; }
+.spk.big svg { width: 38px; height: 38px; }
+
+/* Tabs */
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0px)); z-index: 20; }
+.tabs div { max-width: 720px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.tab { border: 0; background: none; padding: 10px 2px; border-radius: 10px; font-weight: 600; font-size: .9rem; color: var(--muted); min-height: 48px; }
+.tab[aria-current="page"] { color: var(--accent); background: var(--surface-2); box-shadow: inset 0 -3px 0 var(--accent); }
+
+/* Run overlay */
+#run { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); }
+.run-top { display: flex; align-items: center; gap: 12px; padding: 12px 16px; max-width: 720px; width: 100%; margin: 0 auto; }
+.run-top .bar { flex: 1; }
+.x { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); font-size: 1.3rem; line-height: 1; }
+.run-body { flex: 1; overflow-y: auto; padding: 8px 16px 24px; max-width: 720px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.run-foot { border-top: 1px solid var(--line); background: var(--surface); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
+.run-foot > * { max-width: 720px; margin: 0 auto; }
+.q { font-family: var(--font-display); font-variation-settings: "wdth" 108; font-weight: 800; font-size: 1.3rem; text-wrap: balance; }
+.prompt { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.prompt .en { font-size: 1.2rem; font-weight: 600; }
+.prompt .pt { font-size: 1.15rem; font-weight: 600; }
+.listen { display: flex; flex-direction: column; align-items: center; gap: 10px; padding-block: 12px; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 12px; padding: 14px; font-weight: 500; min-height: 54px; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt.ok { border-color: var(--good); background: color-mix(in srgb, var(--good) 14%, var(--surface)); }
+.opt.bad { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
+.ans { min-height: 72px; border-bottom: 2px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; align-content: flex-start; }
+.bank { display: flex; flex-wrap: wrap; gap: 8px; }
+.tok { background: var(--surface); border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 10px; padding: 9px 13px; font-weight: 600; min-height: 44px; }
+.tok.ghost { background: var(--surface-2); color: transparent; border-style: dashed; user-select: none; }
+.fb { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+.fb > div { flex: 1; min-width: 200px; }
+.fb strong { display: block; font-size: 1.05rem; }
+.fb.ok strong { color: var(--good); }
+.fb.bad strong { color: var(--bad); }
+.fb span { color: var(--muted); font-size: .92rem; }
+.learn { display: flex; flex-direction: column; gap: 10px; }
+.learn .prompt { align-items: flex-start; }
+.learn .en { font-weight: 700; }
+.learn .pt { color: var(--muted); font-size: .98rem; font-weight: 500; }
+.bubble { display: flex; gap: 14px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.bubble > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.bubble .en { font-size: 1.15rem; font-weight: 600; }
+.bubble .pt { color: var(--muted); }
+.result { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; padding-top: 24px; }
+.stars { font-family: var(--font-display); font-size: 2.6rem; color: var(--xp); letter-spacing: .15em; }
+.result .big { font-family: var(--font-display); font-variation-settings: "wdth" 115; font-weight: 800; font-size: 2rem; text-wrap: balance; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap" id="app"></div>
+<nav class="tabs" aria-label="Seções"><div id="tabs"></div></nav>
+<div id="run" hidden>
+  <div class="run-top"><button class="x" data-act="quit" aria-label="Sair da atividade">&times;</button><div class="bar"><i id="runbar" style="width:0%"></i></div></div>
+  <div class="run-body" id="runbody"></div>
+  <div class="run-foot" id="runfoot"></div>
+</div>
+
+<script>
+(function () {
+"use strict";
+
+/* ---------- Conteúdo ---------- */
+var UNITS = [
+ { id: "hello", title: "Primeiro contato", sub: "Apresentar-se no estande e pedir para repetir", phrases: [
+  ["Nice to meet you.", "Prazer em conhecê-lo."],
+  ["I'm from Brazil.", "Eu sou do Brasil."],
+  ["I own a small beauty store.", "Tenho uma pequena loja de beleza."],
+  ["I sell online in Brazil.", "Vendo online no Brasil."],
+  ["Here is my business card.", "Aqui está meu cartão de visita."],
+  ["This is my first time at the Canton Fair.", "É a minha primeira vez na Feira de Cantão."],
+  ["Can I take a look at your products?", "Posso dar uma olhada nos seus produtos?"],
+  ["Who is in charge of export sales?", "Quem é o responsável pelas vendas de exportação?"],
+  ["Do you have a catalog?", "Vocês têm catálogo?"],
+  ["Can I take a photo?", "Posso tirar uma foto?"],
+  ["Could you speak more slowly, please?", "Pode falar mais devagar, por favor?"],
+  ["I don't understand. Could you repeat that?", "Não entendi. Pode repetir?"] ] },
+ { id: "price", title: "Preços e cotações", sub: "Perguntar valor, pedir desconto e cotação", phrases: [
+  ["How much is this?", "Quanto custa isto?"],
+  ["What is the price per piece?", "Qual é o preço por unidade?"],
+  ["Is this price FOB or CIF?", "Esse preço é FOB ou CIF?"],
+  ["Is the price in dollars or yuan?", "O preço é em dólares ou em yuan?"],
+  ["Can you give me a discount?", "Pode me dar um desconto?"],
+  ["That is too expensive for me.", "Isso está caro demais para mim."],
+  ["What is your best price?", "Qual é o seu melhor preço?"],
+  ["Does the price include tax?", "O preço inclui impostos?"],
+  ["It is two dollars and fifty cents per piece.", "São dois dólares e cinquenta por peça."],
+  ["I need a quotation, please.", "Preciso de uma cotação, por favor."],
+  ["Can you send me the price list?", "Pode me enviar a lista de preços?"],
+  ["Is there a price for bigger quantities?", "Existe preço para quantidades maiores?"] ] },
+ { id: "product", title: "Produtos e amostras", sub: "Material, certificado, marca própria", phrases: [
+  ["What material is this made of?", "De que material isso é feito?"],
+  ["Is this product safe for skin?", "Este produto é seguro para a pele?"],
+  ["Do you have a certificate?", "Vocês têm certificado?"],
+  ["What colors do you have?", "Quais cores vocês têm?"],
+  ["Can I get a sample?", "Posso receber uma amostra?"],
+  ["Is the sample free?", "A amostra é gratuita?"],
+  ["Do you offer OEM or private label?", "Vocês fazem OEM ou marca própria?"],
+  ["Can you put my logo on the package?", "Podem colocar minha logo na embalagem?"],
+  ["What is the size?", "Qual é o tamanho?"],
+  ["What is the shelf life?", "Qual é a validade?"],
+  ["Do you have this in stock?", "Vocês têm isso em estoque?"],
+  ["Please show me the new arrivals.", "Por favor, mostre-me os lançamentos."] ] },
+ { id: "deal", title: "Negociação", sub: "MOQ, pedido teste, prazo e fechamento", phrases: [
+  ["What is the minimum order quantity?", "Qual é a quantidade mínima de pedido?"],
+  ["Can you lower the MOQ?", "Pode reduzir o MOQ?"],
+  ["I would like to order five hundred pieces.", "Gostaria de pedir quinhentas peças."],
+  ["If I order more, what is the price?", "Se eu pedir mais, qual é o preço?"],
+  ["Can we start with a trial order?", "Podemos começar com um pedido de teste?"],
+  ["This is my final offer.", "Esta é minha oferta final."],
+  ["We have a deal.", "Negócio fechado."],
+  ["I need to think about it.", "Preciso pensar a respeito."],
+  ["Let me check with my partner.", "Vou falar com meu sócio."],
+  ["What is your lead time?", "Qual é o prazo de produção?"],
+  ["Can you guarantee the quality?", "Podem garantir a qualidade?"],
+  ["What are your terms?", "Quais são suas condições?"] ] },
+ { id: "pay", title: "Pagamento e frete", sub: "Entrada, embarque, documentos e rastreio", phrases: [
+  ["What are the payment terms?", "Quais são as condições de pagamento?"],
+  ["Do you accept a thirty percent deposit?", "Aceitam 30% de entrada?"],
+  ["The balance is paid before shipment.", "O saldo é pago antes do embarque."],
+  ["Do you accept PayPal or bank transfer?", "Aceitam PayPal ou transferência bancária?"],
+  ["Can you ship to Brazil?", "Vocês enviam para o Brasil?"],
+  ["How long does shipping take?", "Quanto tempo leva o frete?"],
+  ["Who pays for shipping?", "Quem paga o frete?"],
+  ["Please send me the proforma invoice.", "Por favor, envie-me a fatura proforma."],
+  ["Can you send photos before shipping?", "Pode enviar fotos antes do envio?"],
+  ["What is the tracking number?", "Qual é o número de rastreio?"],
+  ["Can you help with the export documents?", "Podem ajudar com os documentos de exportação?"],
+  ["Please pack it carefully.", "Por favor, embale com cuidado."] ] },
+ { id: "trip", title: "Viagem em Guangzhou", sub: "Táxi, hotel, restaurante e emergências", phrases: [
+  ["Where is the Canton Fair complex?", "Onde fica o Complexo da Feira de Cantão?"],
+  ["How do I get to the subway?", "Como chego ao metrô?"],
+  ["Please take me to this address.", "Leve-me a este endereço, por favor."],
+  ["Can you use the meter?", "Pode usar o taxímetro?"],
+  ["I have a reservation.", "Tenho uma reserva."],
+  ["What time is check-out?", "Que horas é o check-out?"],
+  ["Where is the restroom?", "Onde fica o banheiro?"],
+  ["A table for two, please.", "Uma mesa para dois, por favor."],
+  ["I am allergic to peanuts.", "Tenho alergia a amendoim."],
+  ["Can I pay by card?", "Posso pagar com cartão?"],
+  ["Is there Wi-Fi here?", "Tem Wi-Fi aqui?"],
+  ["Thank you for your time.", "Obrigado(a) pelo seu tempo."] ] }
+];
+
+var DIALOGS = [
+ { id: "booth", title: "No estande", sub: "Primeira conversa com a vendedora", who: "Lily, vendedora", steps: [
+  { them: "Hello! Welcome to our booth. How can I help you?", pt: "Olá! Bem-vindo ao nosso estande. Como posso ajudar?", o: [
+    ["I'm looking for body care products.", 1, "Eu procuro produtos de cuidado corporal."],
+    ["I'm fine, thanks. And you?", 0, "Educado, mas ela perguntou como ajudar. Diga o que você procura."],
+    ["No, thank you. Goodbye.", 0, "Encerra a conversa cedo demais."] ] },
+  { them: "Great! We make body gels and lotions. Are you a retailer or a wholesaler?", pt: "Ótimo! Fabricamos géis e loções corporais. Você é varejista ou atacadista?", o: [
+    ["I'm a retailer. I sell online in Brazil.", 1, "Sou varejista. Vendo online no Brasil."],
+    ["I am a big factory.", 0, "Ela perguntou o seu tipo de negócio, e você não é fábrica."],
+    ["Yes, please.", 0, "A pergunta era 'um ou outro', não aceita sim ou não."] ] },
+  { them: "Which platform do you sell on?", pt: "Em qual plataforma você vende?", o: [
+    ["I sell on Shopee and Mercado Livre.", 1, "Vendo na Shopee e no Mercado Livre."],
+    ["I don't know.", 0, "Passa insegurança. Dê a informação."],
+    ["Thirty dollars.", 0, "É uma resposta de preço para uma pergunta sobre plataforma."] ] },
+  { them: "Would you like to see our catalog?", pt: "Gostaria de ver nosso catálogo?", o: [
+    ["Yes, please. Could I also get a sample?", 1, "Sim, por favor. Posso também receber uma amostra?"],
+    ["No, I'm only here for lunch.", 0, "Fecha a porta para o negócio."],
+    ["Catalog is not important.", 0, "Soa desinteressado e a frase fica incompleta."] ] },
+  { them: "Of course. May I have your business card?", pt: "Claro. Posso ficar com o seu cartão de visita?", o: [
+    ["Sure. Here is my card and my WhatsApp.", 1, "Claro. Aqui está meu cartão e meu WhatsApp."],
+    ["I don't have a name.", 0, "Não responde ao pedido."],
+    ["Please don't take photos.", 0, "Fora de contexto."] ] }
+ ] },
+ { id: "moq", title: "Preço e MOQ", sub: "Negociar quantidade mínima e valor", who: "Lily, vendedora", steps: [
+  { them: "This is our best seller. The price is two dollars fifty per piece.", pt: "Este é nosso mais vendido. O preço é 2,50 dólares por peça.", o: [
+    ["What is the minimum order quantity?", 1, "Qual é a quantidade mínima de pedido?"],
+    ["Where is the restroom?", 0, "Pergunta fora de contexto."],
+    ["I'm not hungry.", 0, "Fora de contexto."] ] },
+  { them: "The MOQ is three thousand pieces.", pt: "O MOQ é de três mil peças.", o: [
+    ["That is high for me. Can you lower the MOQ?", 1, "É alto para mim. Pode reduzir o MOQ?"],
+    ["OK, I will order three million.", 0, "Thousand é mil. Million é milhão."],
+    ["Your product is bad.", 0, "Agressivo. Quebra a negociação."] ] },
+  { them: "For a first order, we can do one thousand pieces, but the price is two dollars eighty.", pt: "Para um primeiro pedido, fazemos mil peças, mas o preço é 2,80 dólares.", o: [
+    ["Can you do two dollars sixty if I order fifteen hundred?", 1, "Faz 2,60 se eu pedir 1.500?"],
+    ["Okay. Whatever.", 0, "Aceita sem negociar e soa indiferente."],
+    ["Too expensive. Bye.", 0, "Encerra rápido demais. Faça uma contraproposta."] ] },
+  { them: "I can do two dollars seventy. That is my best price.", pt: "Posso fazer 2,70. É o meu melhor preço.", o: [
+    ["Deal. Please send me a quotation.", 1, "Fechado. Por favor, envie-me uma cotação."],
+    ["Give it to me for free.", 0, "Pedido sem sentido numa negociação."],
+    ["I don't understand money.", 0, "Não ajuda a fechar o negócio."] ] },
+  { them: "Do you want to customize the packaging?", pt: "Quer personalizar a embalagem?", o: [
+    ["Yes. Can you put my logo on the bottle?", 1, "Sim. Podem colocar minha logo no frasco?"],
+    ["No. Packaging is not important.", 0, "Para marca própria a embalagem faz diferença. Pergunte sobre a logo."],
+    ["You decide everything and I pay.", 0, "Nunca dê carta branca ao fornecedor."] ] }
+ ] },
+ { id: "ship", title: "Pagamento e frete", sub: "Fechar condições e envio para o Brasil", who: "Lily, vendedora", steps: [
+  { them: "Our terms are thirty percent deposit, and seventy percent before shipment.", pt: "Nossas condições: 30% de entrada e 70% antes do embarque.", o: [
+    ["That works. Do you accept bank transfer?", 1, "Pode ser. Vocês aceitam transferência bancária?"],
+    ["I will pay after one year.", 0, "Irreal para um primeiro pedido."],
+    ["I pay with smiles.", 0, "Brincadeira não resolve pagamento."] ] },
+  { them: "Yes, bank transfer is fine. Where should we ship?", pt: "Sim, transferência está ok. Para onde devemos enviar?", o: [
+    ["To Santos port, Brazil. Can you quote FOB and CIF?", 1, "Para o porto de Santos, Brasil. Podem cotar FOB e CIF?"],
+    ["I live in Brazil, so no shipping.", 0, "O frete internacional é necessário."],
+    ["Ship it to your factory.", 0, "Não faz sentido enviar de volta."] ] },
+  { them: "Production takes twenty days, and shipping takes about thirty-five days.", pt: "A produção leva vinte dias e o frete cerca de trinta e cinco.", o: [
+    ["OK. Can you send photos before shipping?", 1, "Ok. Pode enviar fotos antes do envio?"],
+    ["That is too fast. Make it slower.", 0, "Ninguém pede produção mais lenta."],
+    ["I will cancel. Bye.", 0, "Reação exagerada."] ] },
+  { them: "Sure. We will send you the proforma invoice today.", pt: "Claro. Enviaremos a fatura proforma hoje.", o: [
+    ["Thank you. Please send it by email.", 1, "Obrigado(a). Por favor, envie por e-mail."],
+    ["I don't use email or phone.", 0, "Impossível manter contato assim."],
+    ["No need. I trust everybody.", 0, "Sempre peça os documentos por escrito."] ] },
+  { them: "Great! It was a pleasure doing business with you.", pt: "Ótimo! Foi um prazer fazer negócios com você.", o: [
+    ["The pleasure is mine. See you at the next fair!", 1, "O prazer é meu. Nos vemos na próxima feira!"],
+    ["Okay. Bye.", 0, "Seco demais para fechar bem."],
+    ["You are welcome.", 0, "Responde a um agradecimento, não a um elogio."] ] }
+ ] }
+];
+
+var SHOWS = [
+ { t: "Shark Tank (programa)", lv: "Médio", d: "Ofertas, preços, margens e números falados rápido. É o treino mais próximo de uma negociação real.", q: "Shark Tank clips negotiation" },
+ { t: "Emily in Paris", lv: "Fácil", d: "Inglês de marketing e reuniões, falado com clareza. Bom para frases de apresentação.", q: "Emily in Paris business meeting scene" },
+ { t: "Friends", lv: "Fácil", d: "Vocabulário do dia a dia, pausas claras e legenda em inglês fácil de achar.", q: "Friends best scenes English" },
+ { t: "Modern Family", lv: "Fácil", d: "Conversas curtas e naturais. Bom para entender respostas rápidas.", q: "Modern Family funny scenes" },
+ { t: "The Office (EUA)", lv: "Médio", d: "Inglês de escritório e telefonemas de vendas, com humor.", q: "The Office sales call scene" },
+ { t: "BBC 6 Minute English (podcast)", lv: "Fácil", d: "Episódios de 6 minutos com transcrição. Ótimo para ouvir no trajeto.", q: "BBC Learning English 6 Minute English" }
+];
+var SONGS = [
+ { t: "Count on Me, Bruno Mars", lv: "Fácil", d: "Ritmo lento e frases curtas. Boa para ouvir lendo a letra." },
+ { t: "Happy, Pharrell Williams", lv: "Fácil", d: "Refrão simples e repetido, bom para fixar pronúncia." },
+ { t: "Perfect, Ed Sheeran", lv: "Médio", d: "Voz clara e frases completas. Treine ouvir terminações como -ed e -s." },
+ { t: "Hello, Adele", lv: "Médio", d: "Pronúncia bem articulada e vocabulário de conversa." },
+ { t: "Don't Stop Believin', Journey", lv: "Médio", d: "Cantar junto ajuda a ligar palavras como os nativos fazem." },
+ { t: "Shake It Off, Taylor Swift", lv: "Difícil", d: "Rápida. Use quando as outras ficarem fáceis." }
+];
+var CHECKS = [
+ "Assisti a 1 episódio com legenda em inglês",
+ "Ouvi 3 músicas lendo a letra",
+ "Repeti 10 frases em voz alta (shadowing)",
+ "Fiz 1 conversa no simulador",
+ "Escrevi 5 frases sobre o meu negócio em inglês"
+];
+var RANKS = ["Visitante", "Curioso da feira", "Comprador", "Negociador", "Importador", "Parceiro de fábrica", "Mestre do MOQ", "Lenda de Cantão"];
+var LVL = [0, 100, 250, 450, 700, 1000, 1400, 1900];
+var TARGET = new Date(2027, 3, 15);
+var GOAL_N = 2;
+var KEY = "canton-english-v1";
+
+/* ---------- Estado ---------- */
+function pad(n) { return String(n).padStart(2, "0"); }
+function fmt(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+function today() { return fmt(new Date()); }
+function yesterday() { var d = new Date(); d.setDate(d.getDate() - 1); return fmt(d); }
+function weekKey() { var d = new Date(); var k = (d.getDay() + 6) % 7; d.setDate(d.getDate() - k); return fmt(d); }
+
+var S = { xp: 0, streak: 0, last: "", done: {}, dlg: {}, goal: { d: "", n: 0 }, week: "", checks: [] };
+try { var raw = localStorage.getItem(KEY); if (raw) { var p = JSON.parse(raw); for (var k in p) S[k] = p[k]; } } catch (e) {}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+if (S.goal.d !== today()) S.goal = { d: today(), n: 0 };
+if (S.week !== weekKey()) { S.week = weekKey(); S.checks = []; }
+
+function touch() {
+  var t = today();
+  if (S.last === t) return;
+  S.streak = S.last === yesterday() ? S.streak + 1 : 1;
+  S.last = t;
+}
+function levelIdx() { var i = 0; for (var j = 0; j < LVL.length; j++) if (S.xp >= LVL[j]) i = j; return i; }
+
+/* ---------- Utilitários ---------- */
+function $(s) { return document.querySelector(s); }
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+var ICON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+
+var voice = null;
+function pickVoice() {
+  try {
+    var vs = speechSynthesis.getVoices();
+    voice = vs.filter(function (v) { return /^en[-_]US/i.test(v.lang); })[0] || vs.filter(function (v) { return /^en/i.test(v.lang); })[0] || null;
+  } catch (e) {}
+}
+try { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; } catch (e) {}
+function speak(t, slow) {
+  try {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = "en-US"; u.rate = slow ? 0.65 : 0.92;
+    if (voice) u.voice = voice;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+var ONES = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+var TENS = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+function words(n) {
+  if (n < 20) return ONES[n];
+  if (n < 100) return TENS[Math.floor(n / 10)] + (n % 10 ? "-" + ONES[n % 10] : "");
+  if (n < 1000) return ONES[Math.floor(n / 100)] + " hundred" + (n % 100 ? " " + words(n % 100) : "");
+  return words(Math.floor(n / 1000)) + " thousand" + (n % 1000 ? " " + words(n % 1000) : "");
+}
+
+/* ---------- Exercícios ---------- */
+function opts(answer, pool) {
+  var others = shuffle(pool.filter(function (x) { return x !== answer; }));
+  return shuffle([answer].concat(others.slice(0, 3)));
+}
+function mk(kind, p, pool) {
+  if (kind === "meaning") return { type: "mc", kind: kind, q: "O que significa?", say: p[0], showEn: p[0], options: opts(p[1], pool.map(function (x) { return x[1]; })), answer: p[1], en: p[0] };
+  if (kind === "reverse") return { type: "mc", kind: kind, q: "Como se diz em inglês?", showPt: p[1], options: opts(p[0], pool.map(function (x) { return x[0]; })), answer: p[0], en: p[0] };
+  if (kind === "listen") return { type: "mc", kind: kind, q: "Ouça e escolha a frase que você escutou", say: p[0], options: opts(p[0], pool.map(function (x) { return x[0]; })), answer: p[0], en: p[0] };
+  return { type: "build", pt: p[1], en: p[0], words: shuffle(p[0].split(" ")), sel: [] };
+}
+function lessonQueue(u, idx) {
+  var pool = u.phrases;
+  var ps = idx === 3 ? shuffle(pool).slice(0, 8) : pool.slice(idx * 4, idx * 4 + 4);
+  var q = [];
+  if (idx < 3) q.push({ type: "learn", items: ps });
+  shuffle(ps).forEach(function (p) { q.push(mk(idx === 3 ? "reverse" : "meaning", p, pool)); });
+  shuffle(ps).forEach(function (p) { q.push(mk("listen", p, pool)); });
+  var last = [];
+  ps.forEach(function (p) { last.push(mk("build", p, pool)); });
+  shuffle(ps).slice(0, 2).forEach(function (p) { last.push(mk("reverse", p, pool)); });
+  return q.concat(shuffle(last));
+}
+function fmtP(v) { return "$" + Math.floor(v / 100).toLocaleString("en-US") + "." + pad(v % 100); }
+function altNum(d) { if (d >= 13 && d <= 19) return (d - 10) * 10; if (d >= 30 && d <= 90 && d % 10 === 0) return d / 10 + 10; return d + 10; }
+function numQueue(mode) {
+  var q = [];
+  for (var i = 0; i < 8; i++) {
+    var say, label, set = {}, list = [], tries = 0;
+    if (mode === "price") {
+      var d = i < 4 ? rnd(1, 19) : rnd(20, 980), cs = [0, 0, 25, 50, 75, 99], c = cs[rnd(0, cs.length - 1)];
+      var val = d * 100 + c;
+      label = fmtP(val); say = words(d) + " dollars" + (c ? " and " + words(c) + " cents" : "");
+      list = [label]; set[label] = 1;
+      while (list.length < 4 && tries++ < 40) {
+        var t = rnd(0, 3), v = val;
+        if (t === 0) v = (d + rnd(1, 3)) * 100 + c;
+        else if (t === 1) v = Math.max(1, d - rnd(1, 3)) * 100 + c;
+        else if (t === 2) v = d * 100 + cs[rnd(0, cs.length - 1)];
+        else v = altNum(d) * 100 + c;
+        var l = fmtP(v); if (!set[l]) { set[l] = 1; list.push(l); }
+      }
+      while (list.length < 4) { var f = fmtP((d + list.length + 5) * 100); if (!set[f]) { set[f] = 1; list.push(f); } }
+    } else {
+      var n = i < 4 ? rnd(1, 19) * 50 : rnd(10, 99) * 100 + (rnd(0, 1) ? 50 : 0), step = n < 1000 ? 50 : 100;
+      label = n.toLocaleString("en-US") + " pcs"; say = words(n) + " pieces";
+      list = [label]; set[label] = 1;
+      while (list.length < 4 && tries++ < 40) {
+        var m = rnd(0, 2) === 0 && n >= 1000 ? Math.floor(n / 1000) * 100 + (Math.floor(n / 100) % 10) * 1000 + (n % 100) : n + (rnd(0, 1) ? 1 : -1) * rnd(1, 4) * step;
+        var l2 = m.toLocaleString("en-US") + " pcs"; if (m > 0 && !set[l2]) { set[l2] = 1; list.push(l2); }
+      }
+      while (list.length < 4) { var f2 = (n + list.length * 500).toLocaleString("en-US") + " pcs"; if (!set[f2]) { set[f2] = 1; list.push(f2); } }
+    }
+    q.push({ type: "mc", kind: "num", q: mode === "price" ? "Qual preço você ouviu?" : "Qual quantidade você ouviu?", say: say, options: shuffle(list), answer: label, en: say });
+  }
+  return q;
+}
+function dlgQueue(dl) {
+  return dl.steps.map(function (s) {
+    return { type: "dlg", who: dl.who, them: s.them, pt: s.pt, o: shuffle(s.o) };
+  });
+}
+
+/* ---------- Execução ---------- */
+var run = null;
+function startRun(o) {
+  run = { kind: o.kind, ref: o.ref, q: o.q.slice(), i: 0, orig: o.q.filter(function (e) { return e.type !== "learn"; }).length, first: 0, xp: 0, wrong: 0 };
+  $("#run").hidden = false;
+  document.body.style.overflow = "hidden";
+  step();
+}
+function closeRun() {
+  run = null;
+  $("#run").hidden = true;
+  document.body.style.overflow = "";
+  try { speechSynthesis.cancel(); } catch (e) {}
+  render();
+}
+function step() {
+  var ex = run.q[run.i];
+  $("#runbar").style.width = Math.min(100, Math.round(run.i / run.q.length * 100)) + "%";
+  if (!ex) return finish();
+  $("#runbody").scrollTop = 0;
+  if (ex.type === "learn") return rLearn(ex);
+  if (ex.type === "mc") return rMC(ex);
+  if (ex.type === "build") return rBuild(ex);
+  if (ex.type === "dlg") return rDlg(ex);
+}
+function foot(ok, strong, msg) {
+  $("#runfoot").innerHTML = '<div class="fb ' + (ok ? "ok" : "bad") + '"><div><strong>' + esc(strong) + '</strong><span>' + esc(msg) + '</span></div><button class="btn" data-act="next" id="nextbtn">Continuar</button></div>';
+  var b = $("#nextbtn"); if (b) b.focus();
+}
+function rLearn(ex) {
+  $("#runbody").innerHTML = '<p class="q">Ouça e leia as frases desta lição</p><div class="learn">' + ex.items.map(function (p) {
+    return '<div class="prompt"><button class="spk" data-act="say" data-say="' + esc(p[0]) + '" aria-label="Ouvir">' + ICON + '</button><div><p class="en">' + esc(p[0]) + '</p><p class="pt">' + esc(p[1]) + '</p></div></div>';
+  }).join("") + "</div>";
+  $("#runfoot").innerHTML = '<button class="btn wide" data-act="next">Começar exercícios</button>';
+}
+function rMC(ex) {
+  var h = '<p class="q">' + esc(ex.q) + "</p>";
+  if (ex.kind === "meaning") h += '<div class="prompt"><button class="spk" data-act="say" data-say="' + esc(ex.say) + '" aria-label="Ouvir">' + ICON + '</button><span class="en">' + esc(ex.showEn) + "</span></div>";
+  else if (ex.kind === "reverse") h += '<div class="prompt"><span class="pt">' + esc(ex.showPt) + "</span></div>";
+  else h += '<div class="listen"><button class="spk big" data-act="say" data-say="' + esc(ex.say) + '" aria-label="Ouvir">' + ICON + '</button><button class="link" data-act="say" data-slow="1" data-say="' + esc(ex.say) + '">Ouvir devagar</button></div>';
+  h += '<div class="opts">' + ex.options.map(function (o, i) { return '<button class="opt" data-act="opt" data-i="' + i + '">' + esc(o) + "</button>"; }).join("") + "</div>";
+  $("#runbody").innerHTML = h;
+  $("#runfoot").innerHTML = "";
+  if (ex.say && ex.kind !== "meaning") setTimeout(function () { if (run && run.q[run.i] === ex) speak(ex.say); }, 250);
+}
+function rBuild(ex) {
+  var used = {}; ex.sel.forEach(function (i) { used[i] = 1; });
+  $("#runbody").innerHTML = '<p class="q">Monte a frase em inglês</p><div class="prompt"><span class="pt">' + esc(ex.pt) + '</span></div><div class="ans">' +
+    ex.sel.map(function (i) { return '<button class="tok" data-act="untok" data-i="' + i + '">' + esc(ex.words[i]) + "</button>"; }).join("") +
+    '</div><div class="bank">' + ex.words.map(function (w, i) { return used[i] ? '<span class="tok ghost">' + esc(w) + "</span>" : '<button class="tok" data-act="tok" data-i="' + i + '">' + esc(w) + "</button>"; }).join("") + "</div>";
+  $("#runfoot").innerHTML = '<button class="btn wide" data-act="check"' + (ex.sel.length ? "" : " disabled") + ">Verificar</button>";
+}
+function rDlg(ex) {
+  $("#runbody").innerHTML = '<p class="q">' + esc(ex.who) + ' diz:</p><div class="bubble"><button class="spk" data-act="say" data-say="' + esc(ex.them) + '" aria-label="Ouvir">' + ICON + '</button><div><p class="en">' + esc(ex.them) + '</p><button class="link" data-act="reveal">Ver tradução</button><p class="pt" id="tr" hidden>' + esc(ex.pt) + '</p></div></div><p class="q">Sua resposta</p><div class="opts">' +
+    ex.o.map(function (o, i) { return '<button class="opt" data-act="opt" data-i="' + i + '">' + esc(o[0]) + "</button>"; }).join("") + "</div>";
+  $("#runfoot").innerHTML = "";
+  setTimeout(function () { if (run && run.q[run.i] === ex) speak(ex.them); }, 250);
+}
+var PRAISE = ["Correto!", "Isso aí!", "Muito bem!", "Perfeito!"];
+function award(ex, ok) {
+  if (ok) { if (!ex.retry) { run.first++; run.xp += ex.type === "dlg" ? 15 : 10; } }
+  else if (ex.type !== "dlg" && !ex.retry) { run.q.push(Object.assign({}, ex, { retry: true, sel: [], options: ex.options ? shuffle(ex.options) : undefined, words: ex.words ? shuffle(ex.words) : undefined })); }
+}
+function onOpt(i) {
+  var ex = run.q[run.i];
+  var btns = document.querySelectorAll(".opt");
+  var ok, correctIdx;
+  if (ex.type === "dlg") {
+    ok = !!ex.o[i][1];
+    ex.o.forEach(function (o, j) { if (o[1]) correctIdx = j; });
+  } else {
+    ok = ex.options[i] === ex.answer;
+    correctIdx = ex.options.indexOf(ex.answer);
+  }
+  btns.forEach(function (b) { b.disabled = true; });
+  btns[i].classList.add(ok ? "ok" : "bad");
+  if (!ok) btns[correctIdx].classList.add("ok");
+  award(ex, ok);
+  if (ex.type === "dlg") {
+    if (ok) foot(true, "Boa resposta!", ex.o[i][0] + " = " + ex.o[i][2]);
+    else foot(false, "Dá para melhorar", ex.o[i][2] + " Melhor: " + ex.o[correctIdx][0]);
+    return;
+  }
+  if (ex.kind === "num") foot(ok, ok ? PRAISE[rnd(0, 3)] : "Quase", '"' + ex.en + '" = ' + ex.answer);
+  else foot(ok, ok ? PRAISE[rnd(0, 3)] : "Quase", ok ? ex.en : "Resposta: " + ex.answer);
+  if (ex.kind === "reverse") speak(ex.en);
+}
+function onCheck() {
+  var ex = run.q[run.i];
+  var got = ex.sel.map(function (i) { return ex.words[i]; }).join(" ");
+  var ok = got === ex.en;
+  award(ex, ok);
+  foot(ok, ok ? PRAISE[rnd(0, 3)] : "Quase", ok ? ex.en : "Resposta: " + ex.en);
+  speak(ex.en);
+}
+function finish() {
+  var ratio = run.orig ? run.first / run.orig : 1;
+  var stars = ratio >= 0.9 ? 3 : ratio >= 0.7 ? 2 : 1;
+  var bonus = run.kind === "dlg" ? 0 : 25;
+  var gain = run.xp + bonus;
+  S.xp += gain; touch();
+  S.goal.n += 1;
+  var goalHit = S.goal.n === GOAL_N;
+  if (goalHit) { S.xp += 20; gain += 20; }
+  if (run.kind === "lesson") {
+    var d = S.done[run.ref.u] || [];
+    if (d.indexOf(run.ref.i) < 0) d.push(run.ref.i);
+    S.done[run.ref.u] = d;
+  }
+  if (run.kind === "dlg") S.dlg[run.ref] = Math.max(S.dlg[run.ref] || 0, run.first);
+  save();
+  var star = ""; for (var i = 0; i < 3; i++) star += i < stars ? "★" : "☆";
+  $("#runbar").style.width = "100%";
+  $("#runbody").innerHTML = '<div class="result"><div class="stars" aria-label="' + stars + ' de 3 estrelas">' + star + '</div><p class="big">' + (run.kind === "dlg" ? "Conversa concluída" : "Atividade concluída") + '</p><p class="sub">' + run.first + " de " + run.orig + ' certas de primeira. Você ganhou <strong>' + gain + ' XP</strong>' + (goalHit ? ", com 20 de bônus por bater a meta de hoje." : ".") + "</p></div>";
+  $("#runfoot").innerHTML = '<button class="btn wide" data-act="quit">Voltar</button>';
+}
+
+/* ---------- Telas ---------- */
+var tab = "missions";
+function headerHTML() {
+  var li = levelIdx(), next = LVL[li + 1], base = LVL[li];
+  var pct = next ? Math.round((S.xp - base) / (next - base) * 100) : 100;
+  var days = Math.max(0, Math.ceil((TARGET - new Date()) / 864e5));
+  return '<header class="badge"><div class="b-top"><span class="wordmark">Canton English</span><span class="pass mono">BUYER PASS · GUANGZHOU</span></div>' +
+    '<div class="b-main"><div><p class="rank mono">Nível ' + (li + 1) + '</p><h1>' + RANKS[li] + '</h1></div><div class="count"><b>' + days + '</b><span>dias até a feira de abril</span></div></div>' +
+    '<div class="xpbar" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + pct + '%"></i></div>' +
+    '<p class="xpl mono"><span>' + S.xp + (next ? " / " + next : "") + ' XP</span><span>sequência: ' + S.streak + (S.streak === 1 ? " dia" : " dias") + "</span></p></header>";
+}
+function vMissions() {
+  var nextFound = false;
+  var h = '<div class="card goal"><div><p class="sub">Meta de hoje</p><strong>' + Math.min(S.goal.n, GOAL_N) + " de " + GOAL_N + ' atividades</strong></div><div class="bar" role="progressbar" aria-valuenow="' + Math.min(100, S.goal.n / GOAL_N * 100) + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + Math.min(100, S.goal.n / GOAL_N * 100) + '%"></i></div></div>';
+  h += '<div class="stack"><h2 class="sec-title">Missões</h2><p class="sub">Cada missão tem 3 lições e uma revisão. Ouça cada frase e repita em voz alta.</p></div>';
+  UNITS.forEach(function (u, ui) {
+    var done = S.done[u.id] || [];
+    h += '<section class="card"><div class="unit-head"><h3>' + esc(u.title) + '</h3><span class="unit-n mono">' + done.length + "/4</span></div><p class=\"sub\">" + esc(u.sub) + '</p><div class="chips">';
+    ["Lição 1", "Lição 2", "Lição 3", "Revisão"].forEach(function (name, i) {
+      var isDone = done.indexOf(i) >= 0, cls = "chip";
+      if (isDone) cls += " done"; else if (!nextFound) { cls += " next"; nextFound = true; }
+      h += '<button class="' + cls + '" data-act="lesson" data-u="' + ui + '" data-i="' + i + '">' + (isDone ? "✓ " : "") + name + "</button>";
+    });
+    h += "</div></section>";
+  });
+  h += '<section class="card"><h3 class="sec-title">Treino de números</h3><p class="sub">Vendedores falam preços e quantidades rápido. Ouça e escolha o valor certo. Atenção a pares como thirteen e thirty.</p><div class="row"><button class="btn" data-act="nums" data-mode="price">Preços</button><button class="btn alt" data-act="nums" data-mode="qty">Quantidades</button></div></section>';
+  return h;
+}
+function vDialogs() {
+  var h = '<div class="stack"><h2 class="sec-title">Conversas com fornecedores</h2><p class="sub">Você responde a uma vendedora em 5 passos. Ouça a fala dela, escolha a melhor resposta e veja por que as outras não funcionam.</p></div>';
+  DIALOGS.forEach(function (d) {
+    var s = S.dlg[d.id] || 0, st = "";
+    for (var i = 0; i < 5; i++) st += i < s ? "★" : "☆";
+    h += '<section class="card"><div class="unit-head"><h3 class="sec-title" style="font-size:1.1rem">' + esc(d.title) + '</h3><span class="tag" aria-label="' + s + ' de 5">' + st + '</span></div><p class="sub">' + esc(d.sub) + '</p><button class="btn" data-act="dlg" data-id="' + d.id + '">' + (S.dlg[d.id] != null ? "Jogar de novo" : "Começar conversa") + "</button></section>";
+  });
+  return h;
+}
+function vMedia() {
+  var h = '<div class="stack"><h2 class="sec-title">Séries e músicas</h2><p class="sub">Elas ensinam o ritmo do inglês falado. Os links abrem buscas com trechos e letras para você usar com as legendas em inglês.</p></div>';
+  h += '<section class="card"><h3 class="sec-title" style="font-size:1.05rem">Como estudar com qualquer vídeo</h3><ol class="steps"><li>Assista uma vez sem legenda e tente pegar o assunto.</li><li>Assista de novo com legenda em inglês.</li><li>Escolha 5 frases úteis e repita em voz alta, imitando o ritmo.</li><li>Escreva uma frase sua usando uma delas.</li></ol></section>';
+  h += '<section class="card"><h3 class="sec-title" style="font-size:1.05rem">Séries, programas e podcasts</h3>' + SHOWS.map(function (s) {
+    return '<div class="item"><div class="item-h"><h3>' + esc(s.t) + '</h3><span class="tag">' + s.lv + '</span></div><p class="sub">' + esc(s.d) + '</p><a class="link" href="https://www.youtube.com/results?search_query=' + encodeURIComponent(s.q) + '" target="_blank" rel="noopener">Buscar trechos no YouTube</a></div>';
+  }).join("") + "</section>";
+  h += '<section class="card"><h3 class="sec-title" style="font-size:1.05rem">Músicas</h3>' + SONGS.map(function (s) {
+    return '<div class="item"><div class="item-h"><h3>' + esc(s.t) + '</h3><span class="tag">' + s.lv + '</span></div><p class="sub">' + esc(s.d) + '</p><a class="link" href="https://www.youtube.com/results?search_query=' + encodeURIComponent(s.t + " lyrics") + '" target="_blank" rel="noopener">Buscar música com letra</a></div>';
+  }).join("") + "</section>";
+  h += '<section class="card"><h3 class="sec-title" style="font-size:1.05rem">Rotina da semana</h3><p class="sub">Marque o que fez. Cada item vale 10 XP. A lista zera toda segunda-feira.</p>' + CHECKS.map(function (c, i) {
+    return '<div class="check"><input type="checkbox" id="chk' + i + '" data-act="chk" data-i="' + i + '"' + (S.checks[i] ? " checked" : "") + '><label for="chk' + i + '">' + esc(c) + "</label></div>";
+  }).join("") + "</section>";
+  return h;
+}
+function vGlossary() {
+  return '<div class="stack"><h2 class="sec-title">Frases de bolso</h2><p class="sub">Todas as frases do jogo, para ouvir e consultar na feira. Busque em inglês ou português.</p></div><input class="search" id="q" type="search" placeholder="Buscar, por exemplo: desconto, sample, MOQ" aria-label="Buscar frases"><section class="card" id="glist"></section>';
+}
+function glist(term) {
+  term = (term || "").toLowerCase().trim();
+  var out = "";
+  UNITS.forEach(function (u) {
+    u.phrases.forEach(function (p) {
+      if (term && (p[0] + " " + p[1]).toLowerCase().indexOf(term) < 0) return;
+      out += '<div class="phrase"><button class="spk" data-act="say" data-say="' + esc(p[0]) + '" aria-label="Ouvir">' + ICON + '</button><div><p class="en">' + esc(p[0]) + '</p><p class="pt">' + esc(p[1]) + '</p><p class="u mono">' + esc(u.title) + "</p></div></div>";
+    });
+  });
+  $("#glist").innerHTML = out || '<p class="sub">Nenhuma frase encontrada. Tente outra palavra.</p>';
+}
+var TABS = [["missions", "Missões"], ["dialogs", "Conversas"], ["media", "Mídia"], ["gloss", "Frases"]];
+function render() {
+  var v = tab === "missions" ? vMissions() : tab === "dialogs" ? vDialogs() : tab === "media" ? vMedia() : vGlossary();
+  $("#app").innerHTML = headerHTML() + v;
+  $("#tabs").innerHTML = TABS.map(function (t) { return '<button class="tab" data-act="tab" data-t="' + t[0] + '"' + (t[0] === tab ? ' aria-current="page"' : "") + ">" + t[1] + "</button>"; }).join("");
+  if (tab === "gloss") glist("");
+}
+
+/* ---------- Eventos ---------- */
+document.addEventListener("click", function (e) {
+  var t = e.target.closest("[data-act]"); if (!t) return;
+  var a = t.dataset.act, d = t.dataset;
+  if (a === "tab") { tab = d.t; render(); window.scrollTo(0, 0); }
+  else if (a === "say") speak(d.say, d.slow === "1");
+  else if (a === "lesson") { var u = UNITS[+d.u]; startRun({ kind: "lesson", ref: { u: u.id, i: +d.i }, q: lessonQueue(u, +d.i) }); }
+  else if (a === "nums") startRun({ kind: "nums", q: numQueue(d.mode) });
+  else if (a === "dlg") { var dl = DIALOGS.filter(function (x) { return x.id === d.id; })[0]; startRun({ kind: "dlg", ref: dl.id, q: dlgQueue(dl) }); }
+  else if (a === "quit") closeRun();
+  else if (a === "next") { if (run) { run.i++; step(); } }
+  else if (a === "opt") onOpt(+d.i);
+  else if (a === "tok") { var ex = run.q[run.i]; ex.sel.push(+d.i); rBuild(ex); }
+  else if (a === "untok") { var ex2 = run.q[run.i]; ex2.sel = ex2.sel.filter(function (i) { return i !== +d.i; }); rBuild(ex2); }
+  else if (a === "check") onCheck();
+  else if (a === "reveal") { var tr = $("#tr"); if (tr) { tr.hidden = false; t.hidden = true; } }
+  else if (a === "chk") {
+    var i = +d.i;
+    if (t.checked && !S.checks[i]) { S.xp += 10; touch(); }
+    S.checks[i] = t.checked; save();
+    var h = $(".badge"); if (h) h.outerHTML = headerHTML();
+  }
+});
+document.addEventListener("input", function (e) { if (e.target && e.target.id === "q") glist(e.target.value); });
+
+render();
+})();
+</script>
